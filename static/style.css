@@ -1,0 +1,30 @@
+body {
+  background-color:#272525;
+  font-family:"Arial";
+  color: white;
+}
+
+/*This is nav bar shtuff*/
+.navfloat { 
+  background-color: black;
+float: right;
+}
+.nav {
+  display: block;
+  color: white;
+  text-align: center;
+}
+
+.navpos {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.nav:hover:not(.active) {
+  background-color: black;
+}
+
+.active {
+  background-color: #006855;
+}
