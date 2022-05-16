@@ -5,26 +5,30 @@ body {
 }
 
 /*This is nav bar shtuff*/
-.navfloat { 
-  background-color: black;
-float: right;
-}
-.nav {
-  display: block;
-  color: white;
-  text-align: center;
-}
+body {margin:0;}
 
-.navpos {
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: black;
   position: fixed;
   top: 0;
   width: 100%;
 }
 
-.nav:hover:not(.active) {
-  background-color: black;
+
+li a {
+  color: white;
+  text-align: left;
+  padding: 15px 15px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #111;
 }
 
 .active {
-  background-color: #006855;
-}
+  background-color: #04AA6D;
