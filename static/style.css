@@ -7,7 +7,9 @@ body {
 /*This is nav bar shtuff*/
 body {margin:0;}
 
-ul {
+ul {  
+  display: flex;
+  flex-direction: row;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -18,17 +20,17 @@ ul {
   width: 100%;
 }
 
-
 li a {
   color: white;
   text-align: left;
-  padding: 15px 15px;
+  padding: 0px 10px;
   text-decoration: none;
 }
 
-li a:hover {
+li :hover {
   background-color: #111;
 }
 
-.active {
+li active {
   background-color: #04AA6D;
+
