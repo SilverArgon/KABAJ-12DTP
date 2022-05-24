@@ -1,0 +1,20 @@
+{%extends "layout.html"%}
+{%block content%}
+<style>
+  #login {
+    color: white;
+  }
+</style>
+<h1> You've made an account already? Good.</h1>
+<p> Now log back into this beauty of a website</p>
+<hr>
+<form method="post">
+<label for="username"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="username" required>
+   <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" required>
+<button type="submit" class="loginbutton">Log In</button>
+</form>
+<a href="signup">Don't already have an account? God you're pathetic. Go here instead.</a>
+<p>{{error}}</p>
+{%endblock%}
