@@ -1,9 +1,12 @@
 body {
   background-color:#272525;
-  font-family:"Arial";
+  font-family:"Roboto Mono";
   color: white;
 }
-
+.blue {
+  background-color: #212135;
+  color: #19B3B8;
+}
 /*This is nav bar shtuff*/
 body {margin:0;}
 
@@ -18,19 +21,84 @@ ul {
   position: fixed;
   top: 0;
   width: 100%;
+  height: 35px;
+  margin-left: auto;
 }
-
+.nav-right {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  top: 0;
+  width: 100%;
+  height: 35px;
+  margin-right: auto;
+}
 li a {
   color: white;
   text-align: left;
-  padding: 0px 10px;
+  padding: 20px 20px;
   text-decoration: none;
+  font-size: 30px;
+  text-align: center;
+  margin-left: auto;
 }
 
 li :hover {
   background-color: #111;
 }
 
-li active {
+li :active {
   background-color: #04AA6D;
   }
+
+/*This is for a footer. Surprise.*/
+footer {
+  display: block;
+  text-align: center;
+  background-color: black;
+}
+
+/* This is for the home page box where text goes*/
+.hometext {
+  width: 930px;
+  padding: 10px;
+  background-color:#C4C4C4;
+  color: black;
+  border: 5px solid gray;
+  position: center; 
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+}
+
+/*Home screen logo image to centre*/
+.centre {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  height: auto;
+
+}
+
+div {
+  height: 50px;
+  width: 50px;
+}
+
+/*input box stuff*/
+.post-text {
+  width: 300px;
+  height: 200px;
+}
+
+/*Textboxes, logins, signups, post making, etc*/
+.input-boxes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

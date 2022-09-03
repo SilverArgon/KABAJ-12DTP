@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{%extends "layout.html"%}
+{%block content%}
+<style>
+  #board {
+    color: white;
+  }
+</style>
+<p><br></p>
+<h1>Work in Progress {{ name }} Post creator</h1>
+<form method="post" action="/new_post/{{ board_id }}">
+<label for="postname"><b>Post Name</b></label>
+      <input type="text" placeholder="Enter post name" name="postname" required maxlength="40"><br><br>
+   <label for="posttext"><b>Post Text</b></label> 
+    <input type="text" class="post-text" placeholder="Put text here" name="posttext" required maxlength="1000"> <br><br>
+<button type="submit" class="create-post">Post</button>
+</form>
+<h3>{{error}}</h3>
+{%endblock%}

@@ -1,21 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head> 
+  <head>
   <link rel = "stylesheet" href = "/static/style.css">
-  </head>
+  <link rel="icon" type="image/x-icon" href="/static/KABAJfavi.png"> 
+  </head> 
   <body>
     <header>
       <ul> 
       <li> <a id="Home" href="/">Home</a></li>
-      <li> <a href="signup">Sign Up</a></li> 
-      <li> <a href="login">Log In</a></li>
+      {% if session.get("is_logged_in", False) %}
+      <div class="nav-right">
+        <li style="float:right"> <img href="/static/{{image_path}}">
+        <li> <a href="/board/1">Digi</a></li>
+        <li> <a href="/board/2">Math</a></li>
+        <li> <a href="/board/3">Sci</a></li>
+        <li> <a href="/logout">Logout</a></li></div>
+      {% else %}
+      <div class="nav-right">
+        <li> <a href="/signup">Signup</a></li> 
+        <li> <a href="/login">Login</a></li> </div>
+      {% endif %}
+
       </ul>
     </header>
+    
 
   
     
         
 
         {%block content%} {%endblock%}
+<footer>
+  <p>Created by Ajax Guo<br>
+  Licensed by EspressoForDunfordWare™ 2022</p>
+</footer>
   </body>
 </html>
