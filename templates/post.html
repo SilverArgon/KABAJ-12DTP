@@ -13,6 +13,14 @@
       <input type="text" placeholder="Enter post name" name="postname" required maxlength="40"><br><br>
    <label for="posttext"><b>Post Text</b></label> 
     <input type="text" class="post-text" placeholder="Put text here" name="posttext" required maxlength="1000"> <br><br>
+   <label for="imageupload"><b>Upload Image</b></label>
+    <input type="file" id="img" name="img" accept="image/*">
+  <select name="tag" required>
+    <option value="">--Select Category--</option>
+    <option value="Chat">Chat</option>
+    <option value="Discussion">Discussion</option>
+    <option value="Help">Help</option>
+  </select>
 <button type="submit" class="create-post">Post</button>
 </form>
 <h3>{{error}}</h3>

@@ -52,10 +52,15 @@ li :active {
   }
 
 /*This is for a footer. Surprise.*/
-footer {
+.footer {
   display: block;
   text-align: center;
   background-color: black;
+  margin-top: auto;
+  display: flex;
+  min-height: 10vh;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 /* This is for the home page box where text goes*/

@@ -18,7 +18,7 @@ app.secret_key = SECRET_KEY
 
 
 def is_logged_in():
-    # Checks if user is logged in
+    # Checks if user is logged in (aka session)
     return session.get("is_logged_in", False)
    
 
@@ -46,15 +46,23 @@ def signup():
         hashpassword = generate_password_hash(password)
         conn = sqlite3.connect("kabaj.db")
         cursor = conn.cursor()
+        cursor.execute('''SELECT username FROM User WHERE username = ?''',
+                       (username,))
+        user_id = cursor.fetchone()
+        print(user_id)
+        if user_id is not None:
+            print("test")
+            return render_template("signup.html",
+                                   error="Pre-existing account has this username.")
+                                
         cursor.execute('''INSERT INTO User
                         (username, password_hash, image_path, admin)
                         VALUES (?,?,'blankpfp.png',false)
                         ''', (username, hashpassword))
-        user_id = cursor.fetchone()
         conn.commit()
         conn.close()
         session["is_logged_in"] = True
-        return redirect("success")
+        return redirect("/success")
     return render_template("signup.html")
 
 
@@ -102,31 +110,43 @@ def success():
 
 
 # Viewing board ID
-@app.route("/board/<int:board_id>")
+@app.route("/board/<int:board_id>", methods=["GET","POST"])
 def board(board_id):
-    conn = sqlite3.connect("kabaj.db")
-    cursor = conn.cursor()
-    cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
-    name = cursor.fetchone()
-    conn.close()
-    return render_template("board.html", name=name[0], board_id=board_id)      
+    if is_logged_in:
+        conn = sqlite3.connect("kabaj.db")
+        cursor = conn.cursor()
+        cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
+        name = cursor.fetchone()
+        conn.close()
+        return render_template("post.html", name=name[0], board_id=board_id)  
+    else:
+        return redirect("/login")
+
+
+def posttime():
+    posttime = datetime.today().strftime("%H%M%d%m%Y")
+    return posttime
 
 # When posting gets rerouted to new api
 @app.route("/new_post/<int:board_id>", methods=["POST"])
 def new_post(board_id):
         postname = request.form.get("postname")
         posttext = request.form.get("posttext")
+        tag = request.form.get("tag")
         conn = sqlite3.connect("kabaj.db")
         cursor = conn.cursor()
         cursor.execute('''INSERT INTO THREAD
-                        (title, board_id, pinned)
-                        VALUES (?,?,false)
-                        ''', (postname, board_id))
+                        (title, board_id, pinned,category)
+                        VALUES (?,?,false,?)
+                        ''', (postname, board_id, tag,))
+        conn.commit()
+        user_id = session.get("user_id", None)
         cursor.execute('''INSERT INTO POST
-                        (created_at, body, user_id, thread_id) VALUES (?,?)''', (posttext,user_id, board_id))
+                        (created_at, body, user_id, thread_id) VALUES (?,?,?,?)''', (posttime(), posttext, user_id, board_id))
         conn.commit()
         conn.close()
         print ("Post made.")
+        sleep(3)
         return redirect("/")
 
 
