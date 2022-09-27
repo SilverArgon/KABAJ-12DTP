@@ -52,17 +52,28 @@ li :active {
   }
 
 /*This is for a footer. Surprise.*/
-.footer {
-  display: block;
+/*footer {
+  position: fixed;
+  bottom: 0;
+}*/
+
+footer ul {
+  margin: 0;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+}
+
+footer {
   text-align: center;
   background-color: black;
   margin-top: auto;
-  display: flex;
-  min-height: 10vh;
-  flex-direction: column;
-  justify-content: flex-start;
-}
+  display: block;
+  position: relative;
+  bottom: 0;
+  width: 100%;
 
+}
 /* This is for the home page box where text goes*/
 .hometext {
   width: 930px;

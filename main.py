@@ -1,7 +1,7 @@
 # KABAJ via Flask
 # Created by Ajax Guo 11/05
 # Licensed by EspressoForDunfordWare
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, g
 from time import sleep
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
@@ -16,27 +16,29 @@ app = Flask(__name__)
 SECRET_KEY = "184989dcf7e442d9550c4c9e228f9a752cde4045d9ddb19d"
 app.secret_key = SECRET_KEY
 
+def get_db():
+    # Stores DB connection to a variable. Prevents crashing and db locking.
+    if "db" not in g:
+        g.db = sqlite3.connect("kabaj.db")
+    return g.db
+
+# Closes database connection when website goes down
+@app.teardown_appcontext
+def teardown_db(_):
+    get_db().close()
+
 
 def is_logged_in():
     # Checks if user is logged in (aka session)
     return session.get("is_logged_in", False)
    
 
-'''def pfp():
-    # Returns users profile picture onto the header
-    if is_logged_in:
-        conn = sqlite3.connect("kabaj.db")
-        cursor = conn.cursor()
-        cursor.execute(''SELECT image_path FROM User WHERE id = ?'',
-                       (session.get("user_id"),))
-    return cursor.fetchone'''
-
-
+# Home page (wow)
 @app.route("/")
 def home():
     return render_template("home.html", logged_in=is_logged_in())
 
-
+# Signup
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     # Requests database to modify to add the details of the newly made account.
@@ -44,7 +46,7 @@ def signup():
         username = request.form.get("username")
         password = request.form.get("password")
         hashpassword = generate_password_hash(password)
-        conn = sqlite3.connect("kabaj.db")
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute('''SELECT username FROM User WHERE username = ?''',
                        (username,))
@@ -60,20 +62,19 @@ def signup():
                         VALUES (?,?,'blankpfp.png',false)
                         ''', (username, hashpassword))
         conn.commit()
-        conn.close()
         session["is_logged_in"] = True
         return redirect("/success")
     return render_template("signup.html")
 
-
+# Login page
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        conn = sqlite3.connect("kabaj.db")
+        conn = get_db()
         cursor = conn.cursor()
-        # Line below is just to check if the account exists first
+        # Check if the account exists first
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
         user_id = cursor.fetchone()
@@ -86,7 +87,6 @@ def login():
         passfetch = cursor.fetchone()[0]
         if not check_password_hash(passfetch, password):
             return render_template("login.html", error="Password Incorrect.")
-        conn.close()
         session["is_logged_in"] = True,
         return redirect("success")
     return render_template("login.html")
@@ -99,7 +99,7 @@ def logout():
     session.pop("is_logged_in", False)
     return redirect("/")
 
-
+# Redirect user here if they sign up/log in successfully. Access is allowed if you have a session.
 @app.route("/success")
 def success():
     if is_logged_in():
@@ -109,15 +109,15 @@ def success():
                                error="You're not in an account right now.")
 
 
-# Viewing board ID
+# Viewing board ID and checking if user has a session
 @app.route("/board/<int:board_id>", methods=["GET","POST"])
 def board(board_id):
     if is_logged_in:
-        conn = sqlite3.connect("kabaj.db")
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
         name = cursor.fetchone()
-        conn.close()
+
         return render_template("post.html", name=name[0], board_id=board_id)  
     else:
         return redirect("/login")
@@ -131,25 +131,23 @@ def posttime():
 @app.route("/new_post/<int:board_id>", methods=["POST"])
 def new_post(board_id):
         postname = request.form.get("postname")
-        posttext = request.form.get("posttext")
         tag = request.form.get("tag")
-        conn = sqlite3.connect("kabaj.db")
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute('''INSERT INTO THREAD
                         (title, board_id, pinned,category)
                         VALUES (?,?,false,?)
                         ''', (postname, board_id, tag,))
         conn.commit()
+        posttext = request.form.get("posttext")
         user_id = session.get("user_id", None)
         cursor.execute('''INSERT INTO POST
                         (created_at, body, user_id, thread_id) VALUES (?,?,?,?)''', (posttime(), posttext, user_id, board_id))
         conn.commit()
-        conn.close()
         print ("Post made.")
-        sleep(3)
         return redirect("/")
 
-
+# This is just error 404
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template("404.html")
