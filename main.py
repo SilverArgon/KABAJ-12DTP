@@ -50,9 +50,9 @@ def signup():
         cursor = conn.cursor()
         cursor.execute('''SELECT username FROM User WHERE username = ?''',
                        (username,))
-        user_id = cursor.fetchone()
-        print(user_id)
-        if user_id is not None:
+        usernamecheck = cursor.fetchone()
+        print(usernamecheck)
+        if usernamecheck is not None:
             print("test")
             return render_template("signup.html",
                                    error="Pre-existing account has this username.")
@@ -62,6 +62,11 @@ def signup():
                         VALUES (?,?,'blankpfp.png',false)
                         ''', (username, hashpassword))
         conn.commit()
+        cursor.execute('''SELECT id FROM User WHERE username = ?''',
+                         (username,))
+        user_id = cursor.fetchone()
+        session["user_id"] = user_id
+        conn.close
         session["is_logged_in"] = True
         return redirect("/success")
     return render_template("signup.html")
@@ -97,6 +102,7 @@ def login():
 def logout():
     # ends user session (wowee)
     session.pop("is_logged_in", False)
+    session.pop("user_id", None)
     return redirect("/")
 
 # Redirect user here if they sign up/log in successfully. Access is allowed if you have a session.
@@ -141,8 +147,9 @@ def new_post(board_id):
         conn.commit()
         posttext = request.form.get("posttext")
         user_id = session.get("user_id", None)
+        print(user_id, board_id)
         cursor.execute('''INSERT INTO POST
-                        (created_at, body, user_id, thread_id) VALUES (?,?,?,?)''', (posttime(), posttext, user_id, board_id))
+                        (created_at, body, user_id, thread_id) VALUES (?,?,?,?)''', (posttime(), posttext, user_id[0], board_id))
         conn.commit()
         print ("Post made.")
         return redirect("/")
