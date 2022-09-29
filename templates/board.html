@@ -8,9 +8,7 @@
   </style>
   <p><br></p>
   <h1>  {{name}} Board</h1>
-  <div class = "threadbutton"> 
-    <li><a href="/post/{{board_id}}>">New Post</a></li>
-  </div>
+   <button type="button"><a href="/post/{{board_id}}>">New Post</a></button>
 {% for thread in thread_value %}
   <div class="threadboxes" ><h2><a href="/board/{{board_id}}/{{thread[1]}}">{{thread[0]}}</a></h2> </div>
 {%endfor%}

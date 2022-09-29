@@ -99,6 +99,10 @@ li :active {
 .post-text {
   width: 50%;
   height: auto;
+  position: center; 
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
 }
 
 /*Textboxes, logins, signups, post making, etc*/
@@ -112,23 +116,26 @@ li :active {
   overflow: hidden;
 }
 
-/*Make Thread here button*/
+/*Make Post here button*/
 .threadbutton {
   align-items: center;
   width: 150px;
   background-color: #0f0f0f;
   color: white;
-  position: right;
-  margin-right: auto;
+  word-wrap: normal;
+  border: 2px solid #0f0f0f;
+  position: relative;
+  left: 40%;
 }
 
-/*Thread+Post boxes*/
+/*Outline Post boxes*/
 .threadboxes {
   padding: 1.5%;
   word-wrap: normal;
   border: 2px solid white;
 }
 
+/*footer*/
 footer ul {
   margin: 0;
   background-color: black;

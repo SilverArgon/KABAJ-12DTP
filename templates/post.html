@@ -7,14 +7,12 @@
   }
 </style>
 <p><br></p>
-<h1>Work in Progress {{ name }} Post creator</h1>
+<h1>Make a {{ name }} Post here</h1>
 <form method="post" action="/new_post/{{ board_id }}">
 <label for="postname"><b>Post Name</b></label>
       <input type="text" placeholder="Enter post name" name="postname" required maxlength="40"><br><br>
    <label for="posttext"><b>Post Text</b></label> 
     <input type="text" class="post-text" placeholder="Put text here" name="posttext" required maxlength="1000"> <br><br>
-   <label for="imageupload"><b>Upload Image</b></label>
-    <input type="file" id="img" name="img" accept="image/*">
   <select name="tag" required>
     <option value="">--Select Category--</option>
     <option value="Chat">Chat</option>

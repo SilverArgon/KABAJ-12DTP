@@ -2,15 +2,12 @@
 # Created by Ajax Guo 11/05
 # Licensed by EspressoForDunfordWare
 from flask import Flask, render_template, request, redirect, session, g
-from time import sleep
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
 
 
 app = Flask(__name__)
-
-
 # Random generated key to confirm indivdiual user session
 # print(os.urandom(24).hex())
 SECRET_KEY = "184989dcf7e442d9550c4c9e228f9a752cde4045d9ddb19d"
@@ -46,37 +43,30 @@ def home():
 def signup():
     # Requests database to modify to add the details of the newly made account.
     if request.method == "POST":
-        # creating a variable and getting the username from the request form
         username = request.form.get("username")
-        # creating a variable and getting the password from the request form
         password = request.form.get("password")
-        # generating a password hash
         hashpassword = generate_password_hash(password)
-        # connect to the database
         conn = get_db()
         cursor = conn.cursor()
-        # selecting the username from User table
+        # check username is unique
         cursor.execute('''SELECT username FROM User WHERE username = ?''',
                        (username,))
         usernamecheck = cursor.fetchone()
-        # printing usernamecheck to debug the code
         print(usernamecheck)
         if usernamecheck is not None:
             print("test")
-            # stops user from making same-username account
             return render_template("signup.html",
                                    error="Existing account has this username.")
         # inserting new account into db
         cursor.execute('''INSERT INTO User
-                        (username, password_hash, image_path, admin)
-                        VALUES (?,?,'blankpfp.png',false)
+                        (username, password_hash, admin)
+                        VALUES (?,?,false)
                         ''', (username, hashpassword))
         conn.commit()
         # selecting user_id to validate session
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
-        user_id = cursor.fetchone()
-        # Stores session 
+        user_id = cursor.fetchone() 
         session["user_id"] = user_id
         conn.close
         session["is_logged_in"] = True
@@ -87,13 +77,12 @@ def signup():
 # Login page
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # Requests db to find acc with same data input
+    # Requests db to see if acc exists
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         conn = get_db()
         cursor = conn.cursor()
-        # Check if the account exists first
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
         user_id = cursor.fetchone()
@@ -121,7 +110,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # ends user session (wowee)
+    # ends user session
     session.pop("is_logged_in", False)
     session.pop("user_id", None)
     return redirect("/")
@@ -141,6 +130,7 @@ def success():
 # Viewing a board
 @app.route("/board/<int:board_id>", methods=["GET"])
 def board(board_id):
+    # gets data of all threads and posts with same board_id in the api
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
@@ -159,6 +149,7 @@ def board(board_id):
 #Viewing a thread
 @app.route("/board/<int:board_id>/<int:thread_id>", methods=["GET"])
 def thread_view(board_id , thread_id):
+    # gets db of all info with same thread_id in the api
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
@@ -202,6 +193,7 @@ def new_post(board_id):
         tag = request.form.get("tag")
         conn = get_db()
         cursor = conn.cursor()
+        # put data from form into db
         cursor.execute('''INSERT INTO THREAD
                         (title, board_id, pinned,category)
                         VALUES (?,?,false,?)
@@ -210,9 +202,11 @@ def new_post(board_id):
         posttext = request.form.get("posttext")
         user_id = session.get("user_id", None)
         print(user_id, board_id)
+        # insert thread-related data
         cursor.execute('''SELECT id FROM Thread WHERE title = ?''', (postname,))
         thread_id = cursor.fetchone()
         print((posttime(), posttext, user_id[0], thread_id, board_id))
+        # insert post-related data
         cursor.execute('''INSERT INTO POST
                         (created_at, body, user_id, thread_id, board_id)
                        VALUES (?,?,?,?,?)''',
