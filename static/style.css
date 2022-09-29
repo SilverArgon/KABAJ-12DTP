@@ -2,10 +2,7 @@ body {
   background-color:#272525;
   font-family:"Roboto Mono";
   color: white;
-}
-.blue {
-  background-color: #212135;
-  color: #19B3B8;
+
 }
 /*This is nav bar shtuff*/
 body {margin:0;}
@@ -72,7 +69,7 @@ li :active {
 
 
 /* This is for the home page box where text goes*/
-.hometext {
+.infotext {
   width: 930px;
   padding: 10px;
   background-color:#C4C4C4;
@@ -83,6 +80,7 @@ li :active {
   margin-right: auto;
   margin-top: 50px;
 }
+
 
 /*Home screen logo image to centre*/
 .centre {
@@ -99,10 +97,8 @@ li :active {
 .post-text {
   width: 50%;
   height: auto;
-  position: center; 
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  position: center;
+  margin-left: 8px;
 }
 
 /*Textboxes, logins, signups, post making, etc*/
@@ -116,17 +112,6 @@ li :active {
   overflow: hidden;
 }
 
-/*Make Post here button*/
-.threadbutton {
-  align-items: center;
-  width: 150px;
-  background-color: #0f0f0f;
-  color: white;
-  word-wrap: normal;
-  border: 2px solid #0f0f0f;
-  position: relative;
-  left: 40%;
-}
 
 /*Outline Post boxes*/
 .threadboxes {

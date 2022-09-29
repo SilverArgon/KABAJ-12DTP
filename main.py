@@ -60,15 +60,16 @@ def signup():
         # inserting new account into db
         cursor.execute('''INSERT INTO User
                         (username, password_hash, admin)
-                        VALUES (?,?,false)
+                        VALUES (?,?,0)
                         ''', (username, hashpassword))
         conn.commit()
         # selecting user_id to validate session
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
-        user_id = cursor.fetchone() 
+        user_id = cursor.fetchone()
         session["user_id"] = user_id
         conn.close
+        session["admin"] = False
         session["is_logged_in"] = True
         return redirect("/success")
     return render_template("signup.html")
@@ -92,16 +93,21 @@ def login():
             # If account is not found then it stops rest of code to execute
         cursor.execute('''SELECT password_hash FROM User WHERE id = ?''',
                        (user_id[0],))
-            # Checks to see if password is correct
+        # Checks to see if password is correct
         passfetch = cursor.fetchone()[0]
         if not check_password_hash(passfetch, password):
             return render_template("login.html", error="Password Incorrect.")
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
         user_id = cursor.fetchone()
+        user_id = user_id[0]
         session["user_id"] = user_id
-        print("Logged in Successfully")
-        conn.close
+        print(user_id)
+        # Gives admin session to the one admin account, otherwise no admin session
+        if user_id == (20):
+            session["admin"] = True
+        else:
+            session["admin"] = False
         session["is_logged_in"] = True
         return redirect("success")
     return render_template("login.html")
@@ -216,10 +222,21 @@ def new_post(board_id):
         return redirect("/board/" + str(board_id))
 
 
+@app.route("/delete/<int:thread_id>", methods=["GET","POST"])
+def delete(thread_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''DELETE FROM Thread WHERE id = ?''', (thread_id,))
+    cursor.execute('''DELETE FROM Post WHERE thread_id = ?''', (thread_id,))
+    conn.commit()
+    print("Post deleted.")
+    return redirect("/")
+
+
 # This is just error 404
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template("404.html")
+    return render_template("404.html"), 404
 
 
 if __name__ == "__main__":

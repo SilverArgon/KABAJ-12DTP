@@ -9,10 +9,11 @@
 <p><br></p>
 <h1>Make a {{ name }} Post here</h1>
 <form method="post" action="/new_post/{{ board_id }}">
-<label for="postname"><b>Post Name</b></label>
+<div class = posttext>
+<label for="postname"><b>Post Name</b></label><br>
       <input type="text" placeholder="Enter post name" name="postname" required maxlength="40"><br><br>
-   <label for="posttext"><b>Post Text</b></label> 
-    <input type="text" class="post-text" placeholder="Put text here" name="posttext" required maxlength="1000"> <br><br>
+   <label for="posttext"><b>Post Text</b></label> <br>
+    <input style="height:450px; width:600px; vertical-align:middle;" type="text" placeholder="Put text here" name="posttext" required maxlength="2000"> <br><br>
   <select name="tag" required>
     <option value="">--Select Category--</option>
     <option value="Chat">Chat</option>
@@ -20,6 +21,7 @@
     <option value="Help">Help</option>
   </select>
 <button type="submit" class="create-post">Post</button>
+</div>
 </form>
 <h3>{{error}}</h3>
 {%endblock%}
