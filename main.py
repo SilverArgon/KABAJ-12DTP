@@ -103,7 +103,7 @@ def login():
         user_id = user_id[0]
         session["user_id"] = user_id
         print(user_id)
-        # Gives admin session to the one admin account, otherwise no admin session
+        # Gives admin session to the one admin account
         if user_id == (20):
             session["admin"] = True
         else:
@@ -141,35 +141,38 @@ def board(board_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
     name = cursor.fetchone()
-    cursor.execute('''SELECT title, id FROM Thread WHERE board_id = ?''', (board_id,))
-    thread_value= cursor.fetchall()
-    cursor.execute('''SELECT created_at FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
+    cursor.execute('''SELECT title, id FROM Thread WHERE board_id = ?''',
+                   (board_id,))
+    thread_value = cursor.fetchall()
+    cursor.execute('''SELECT created_at FROM Post WHERE board_id = ? GROUP BY
+                   thread_id''', (board_id,))
     thread_date = cursor.fetchall()
-    cursor.execute('''SELECT body FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
+    cursor.execute('''SELECT body FROM Post WHERE board_id = ? GROUP BY
+                   thread_id''',  (board_id,))
     thread_text = cursor.fetchall()
-    return render_template("board.html", 
-                           name=name[0],board_id=board_id,
+    return render_template("board.html",
+                           name=name[0], board_id=board_id,
                            thread_value=thread_value, thread_date=thread_date,
                            thread_text=thread_text,)
 
-#Viewing a thread
+
+# Viewing a thread
 @app.route("/board/<int:board_id>/<int:thread_id>", methods=["GET"])
-def thread_view(board_id , thread_id):
+def thread_view(board_id, thread_id):
     # gets db of all info with same thread_id in the api
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
     name = cursor.fetchone()
     cursor.execute('''SELECT id,title FROM Thread WHERE id = ?''', (thread_id,))
-    thread_value=cursor.fetchone()
+    thread_value = cursor.fetchone()
     cursor.execute('''SELECT body FROM Post WHERE thread_id = ?''', (thread_id,))
-    thread_text=cursor.fetchone()
+    thread_text = cursor.fetchone()
     cursor.execute('''SELECT created_at FROM Post WHERE thread_id = ?''', (thread_id,))
-    thread_time=cursor.fetchone()
+    thread_time = cursor.fetchone()
     return render_template("thread.html", name=name[0], thread_id=thread_id,
-                            thread_value=thread_value, thread_text=thread_text,
-                            thread_time=thread_time)
-    
+                           thread_value=thread_value, thread_text=thread_text,
+                           thread_time=thread_time)
 
 
 # This checks if user has a session
@@ -222,7 +225,8 @@ def new_post(board_id):
         return redirect("/board/" + str(board_id))
 
 
-@app.route("/delete/<int:thread_id>", methods=["GET","POST"])
+# Deleting a thread
+@app.route("/delete/<int:thread_id>", methods=["GET", "POST"])
 def delete(thread_id):
     conn = get_db()
     cursor = conn.cursor()
