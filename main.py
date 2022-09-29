@@ -126,15 +126,40 @@ def success():
                                error="You're not in an account right now.")
 
 
-# Viewing board ID and checking if user has a session
+# Viewing a board
+@app.route("/board/<int:board_id>", methods=["GET"])
+def board(board_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
+    name = cursor.fetchone()
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT title FROM Thread WHERE board_id = ?''', (board_id,))
+    thread_name = cursor.fetchall()
+    cursor.execute('''SELECT created_at FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
+    thread_date = cursor.fetchall()
+    cursor.execute('''SELECT body FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
+    thread_text = cursor.fetchall()
+    cursor.execute('''SELECT id FROM Thread WHERE board_id = ?''', (board_id,))
+    thread_id = cursor.fetchall()
+    thread_id.reverse()
+    print(thread_text, thread_id)
+    return render_template("board.html", 
+                           board_id=board_id,
+                           thread_name=thread_name, thread_date=thread_date,
+                           thread_text=thread_text, thread_id=thread_id)
+
+
+# This checks if user has a session
+# If they do, this accesses making thread/posts
 @app.route("/post/<int:board_id>", methods=["GET", "POST"])
 def post(board_id):
-    if is_logged_in:
+    if session.get("user_id") is not None:
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
         name = cursor.fetchone()
-
         return render_template("post.html", name=name[0], board_id=board_id)
     else:
         return redirect("/login")
@@ -161,13 +186,16 @@ def new_post(board_id):
         posttext = request.form.get("posttext")
         user_id = session.get("user_id", None)
         print(user_id, board_id)
+        cursor.execute('''SELECT id FROM Thread WHERE title = ?''', (postname,))
+        thread_id = cursor.fetchone()
+        print((posttime(), posttext, user_id[0], thread_id, board_id))
         cursor.execute('''INSERT INTO POST
-                        (created_at, body, user_id, thread_id)
-                       VALUES (?,?,?,?)''',
-                       (posttime(), posttext, user_id[0], board_id))
+                        (created_at, body, user_id, thread_id, board_id)
+                       VALUES (?,?,?,?,?)''',
+                       (posttime(), posttext, user_id[0], thread_id[0], board_id))
         conn.commit()
         print("Post made.")
-        return redirect("/")
+        return redirect("/board/" + str(board_id))
 
 
 # This is just error 404

@@ -82,10 +82,6 @@ li :active {
 
 }
 
-/*div {
-  height: 50px;
-  width: 50px;
-}*/
 
 /*input box stuff*/
 .post-text {
@@ -102,6 +98,23 @@ li :active {
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+/*Make Thread here button*/
+.threadbutton {
+  align-items: center;
+  width: 150px;
+  background-color: #0f0f0f;
+  color: white;
+  position: right;
+  margin-right: auto;
+}
+
+/*Thread+Post boxes*/
+.threadboxes {
+  padding: 1.5%;
+  word-wrap: normal;
+  border: 2px solid white;
 }
 
 footer ul {

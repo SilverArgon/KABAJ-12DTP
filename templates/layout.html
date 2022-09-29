@@ -11,9 +11,9 @@
       {% if session.get("is_logged_in", False) %}
       <div class="nav-right">
         <li style="float:right"> <img href="/static/{{image_path}}">
-        <li> <a href="/post/1">Digi</a></li>
-        <li> <a href="/post/2">Math</a></li>
-        <li> <a href="/post/3">Sci</a></li>
+        <li> <a href="/board/1">Digi</a></li>
+        <li> <a href="/board/2">Math</a></li>
+        <li> <a href="/board/3">Sci</a></li>
         <li> <a href="/logout">Logout</a></li></div>
       {% else %}
       <div class="nav-right">
@@ -23,12 +23,10 @@
 
       </ul>
     </header>
-
         {%block content%} {%endblock%}
 <footer>
     <ul>
-      <li>Created by Ajax Guo </li> <br>
-      <li>Licensed by EspressoForDunfordWare™ 2022</li>
+      <li>Created by Ajax Guo, Licensed by EspressoForDunfordWare™ 2022 </li>
     </ul>
 </footer>
   </body>
