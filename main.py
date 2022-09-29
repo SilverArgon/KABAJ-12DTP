@@ -46,27 +46,37 @@ def home():
 def signup():
     # Requests database to modify to add the details of the newly made account.
     if request.method == "POST":
+        # creating a variable and getting the username from the request form
         username = request.form.get("username")
+        # creating a variable and getting the password from the request form
         password = request.form.get("password")
+        # generating a password hash
         hashpassword = generate_password_hash(password)
+        # connect to the database
         conn = get_db()
         cursor = conn.cursor()
+        # selecting the username from User table
         cursor.execute('''SELECT username FROM User WHERE username = ?''',
                        (username,))
         usernamecheck = cursor.fetchone()
+        # printing usernamecheck to debug the code
         print(usernamecheck)
         if usernamecheck is not None:
             print("test")
+            # stops user from making same-username account
             return render_template("signup.html",
                                    error="Existing account has this username.")
+        # inserting new account into db
         cursor.execute('''INSERT INTO User
                         (username, password_hash, image_path, admin)
                         VALUES (?,?,'blankpfp.png',false)
                         ''', (username, hashpassword))
         conn.commit()
+        # selecting user_id to validate session
         cursor.execute('''SELECT id FROM User WHERE username = ?''',
                        (username,))
         user_id = cursor.fetchone()
+        # Stores session 
         session["user_id"] = user_id
         conn.close
         session["is_logged_in"] = True
@@ -77,6 +87,7 @@ def signup():
 # Login page
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    # Requests db to find acc with same data input
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -92,6 +103,7 @@ def login():
             # If account is not found then it stops rest of code to execute
         cursor.execute('''SELECT password_hash FROM User WHERE id = ?''',
                        (user_id[0],))
+            # Checks to see if password is correct
         passfetch = cursor.fetchone()[0]
         if not check_password_hash(passfetch, password):
             return render_template("login.html", error="Password Incorrect.")
@@ -133,22 +145,34 @@ def board(board_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
     name = cursor.fetchone()
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''SELECT title FROM Thread WHERE board_id = ?''', (board_id,))
-    thread_name = cursor.fetchall()
+    cursor.execute('''SELECT title, id FROM Thread WHERE board_id = ?''', (board_id,))
+    thread_value= cursor.fetchall()
     cursor.execute('''SELECT created_at FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
     thread_date = cursor.fetchall()
     cursor.execute('''SELECT body FROM Post WHERE board_id = ? GROUP BY thread_id''', (board_id,))
     thread_text = cursor.fetchall()
-    cursor.execute('''SELECT id FROM Thread WHERE board_id = ?''', (board_id,))
-    thread_id = cursor.fetchall()
-    thread_id.reverse()
-    print(thread_text, thread_id)
     return render_template("board.html", 
-                           board_id=board_id,
-                           thread_name=thread_name, thread_date=thread_date,
-                           thread_text=thread_text, thread_id=thread_id)
+                           name=name[0],board_id=board_id,
+                           thread_value=thread_value, thread_date=thread_date,
+                           thread_text=thread_text,)
+
+#Viewing a thread
+@app.route("/board/<int:board_id>/<int:thread_id>", methods=["GET"])
+def thread_view(board_id , thread_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''SELECT name FROM Board WHERE id = ?''', (board_id,))
+    name = cursor.fetchone()
+    cursor.execute('''SELECT id,title FROM Thread WHERE id = ?''', (thread_id,))
+    thread_value=cursor.fetchone()
+    cursor.execute('''SELECT body FROM Post WHERE thread_id = ?''', (thread_id,))
+    thread_text=cursor.fetchone()
+    cursor.execute('''SELECT created_at FROM Post WHERE thread_id = ?''', (thread_id,))
+    thread_time=cursor.fetchone()
+    return render_template("thread.html", name=name[0], thread_id=thread_id,
+                            thread_value=thread_value, thread_text=thread_text,
+                            thread_time=thread_time)
+    
 
 
 # This checks if user has a session

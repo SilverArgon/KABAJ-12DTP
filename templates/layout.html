@@ -8,12 +8,11 @@
     <header>
       <ul> 
       <li> <a id="Home" href="/">Home</a></li>
+      <li> <a href="/board/1">Digi</a></li>
+      <li> <a href="/board/2">Math</a></li>
+      <li> <a href="/board/3">Sci</a></li>
       {% if session.get("is_logged_in", False) %}
-      <div class="nav-right">
-        <li style="float:right"> <img href="/static/{{image_path}}">
-        <li> <a href="/board/1">Digi</a></li>
-        <li> <a href="/board/2">Math</a></li>
-        <li> <a href="/board/3">Sci</a></li>
+      <div class="nav-right-logout">
         <li> <a href="/logout">Logout</a></li></div>
       {% else %}
       <div class="nav-right">

@@ -11,9 +11,7 @@
   <div class = "threadbutton"> 
     <li><a href="/post/{{board_id}}>">New Post</a></li>
   </div>
-{% for thread_group in thread_name %}
-  {% for name_thread in thread_group%}
-  <div class="threadboxes" ><h2><a href="/board/{{board_id}}/{{(thread_id[loop.index0])[0]}}>">{{name_thread}}</a></h2> </div>
-  {%endfor%}
+{% for thread in thread_value %}
+  <div class="threadboxes" ><h2><a href="/board/{{board_id}}/{{thread[1]}}">{{thread[0]}}</a></h2> </div>
 {%endfor%}
   {%endblock%}
