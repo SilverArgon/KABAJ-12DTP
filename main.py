@@ -170,9 +170,11 @@ def thread_view(board_id, thread_id):
     thread_text = cursor.fetchone()
     cursor.execute('''SELECT created_at FROM Post WHERE thread_id = ?''', (thread_id,))
     thread_time = cursor.fetchone()
+    cursor.execute('''SELECT category FROM Thread WHERE id = ?''', (thread_id,))
+    thread_tag= cursor.fetchone()
     return render_template("thread.html", name=name[0], thread_id=thread_id,
                            thread_value=thread_value, thread_text=thread_text,
-                           thread_time=thread_time)
+                           thread_time=thread_time, thread_tag=thread_tag[0])
 
 
 # This checks if user has a session
